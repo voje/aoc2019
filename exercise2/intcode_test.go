@@ -2,7 +2,7 @@ package intcode_test
 
 import (
 	"testing"
-	"github.com/voje/aoc2019/exercise2/intcode"
+	intcode "testcom.voje/aoc2019/exercise2/intcode"
 )
 
 var icc intcode.IntCodeComputer
