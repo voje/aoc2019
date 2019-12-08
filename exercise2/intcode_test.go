@@ -1,14 +1,14 @@
 package intcode_test
 
 import (
-	"github.com/voje/exercise2/intcode"
 	"testing"
+	"github.com/voje/aoc2019/exercise2/intcode"
 )
 
 var icc intcode.IntCodeComputer
 
 func SetUp(t *testing.T) {
-	icc = *NewIntCodeCompouter()
+	icc = *intcode.NewIntCodeCompouter()
 }
 
 func TestSetReg(t *testing.T) {
