@@ -2,7 +2,8 @@ package intcode_test
 
 import (
 	"testing"
-	intcode "testcom.voje/aoc2019/exercise2/intcode"
+	"github.com/voje/aoc2019/exercise2/intcode"
+        "github.com/stretchr/testify/assert"
 )
 
 var icc intcode.IntCodeComputer
@@ -11,7 +12,7 @@ func SetUp(t *testing.T) {
 	icc = *intcode.NewIntCodeCompouter()
 }
 
-func TestSetReg(t *testing.T) {
+func TestSetGetReg(t *testing.T) {
 	SetUp(t)
 	type pair struct {
 		idx int
@@ -25,9 +26,8 @@ func TestSetReg(t *testing.T) {
 	for _, p := range pairs {
 		icc.SetReg(p.idx, p.val)
 	}
-}
 
-func TestGetReg(t *testing.T) {
-	SetUp(t)
-
+        for _, p:= range pairs {
+            assert.Equal(t, p.val, icc.GetReg(p.idx))
+        }
 }
