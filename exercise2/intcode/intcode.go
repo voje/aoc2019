@@ -34,6 +34,7 @@ func NewIntCodeComputer() *IntCodeComputer {
 	return &IntCodeComputer{regs: make([]int, 10), pc: 0}
 }
 
+// Partially borrowed from StackOverflow
 func csvSplitFunc(data []byte, atEOF bool) (advance int, token []byte, err error) {
 	// Return nothing if at end of file and no data passed
 	if atEOF && len(data) == 0 {
@@ -53,7 +54,12 @@ func csvSplitFunc(data []byte, atEOF bool) (advance int, token []byte, err error
 	return
 }
 
+// ReadSlice resets all registers to 0 and reads in a new slice.
 func (icc *IntCodeComputer) ReadSlice(s []int) {
+	icc.pc = 0
+	for i := range icc.regs {
+		icc.SetReg(i, 0)
+	}
 	for i, el := range s {
 		icc.SetReg(i, el)
 	}
@@ -75,7 +81,7 @@ func SliceFromReader(r io.Reader) ([]int, error) {
 	s.Split(csvSplitFunc)
 	slc := []int{}
 	for s.Scan() {
-		iText, err := strconv.Atoi(s.Text())
+		iText, err := strconv.Atoi(strings.Trim(s.Text(), "\n"))
 		if err != nil {
 			return nil, err
 		}
@@ -110,7 +116,11 @@ func (icc *IntCodeComputer) NextOpcode() (*Opcode, error) {
 	}, nil
 }
 
-func (icc *IntCodeComputer) Execute() {
+// Execute executes the command, using noun and verb.
+// Noun is the command at address 1, verb is the address at address 2.
+func (icc *IntCodeComputer) Execute(noun, verb int) {
+	icc.SetReg(1, noun)
+	icc.SetReg(2, verb)
 	for {
 		opc, err := icc.NextOpcode()
 		if err == EOP {

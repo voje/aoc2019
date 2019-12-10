@@ -33,14 +33,39 @@ func TestSetGetReg(t *testing.T) {
 	}
 }
 
+type testPair struct {
+	In  []int
+	Out []int
+}
+
+var testPairs = []testPair{
+	{
+		In:  []int{1, 9, 10, 3, 2, 3, 11, 0, 99, 30, 40, 50},
+		Out: []int{3500, 9, 10, 70, 2, 3, 11, 0, 99, 30, 40, 50},
+	},
+	{
+		In:  []int{1, 0, 0, 0, 99},
+		Out: []int{2, 0, 0, 0, 99},
+	},
+	{
+		In:  []int{2, 3, 0, 3, 99},
+		Out: []int{2, 3, 0, 6, 99},
+	},
+	{
+		In:  []int{2, 4, 4, 5, 99, 0},
+		Out: []int{2, 4, 4, 5, 99, 9801},
+	},
+	{
+		In:  []int{1, 1, 1, 4, 99, 5, 6, 0, 99},
+		Out: []int{30, 1, 1, 4, 2, 5, 6, 0, 99},
+	},
+}
+
 func TestExecutions(t *testing.T) {
-	SetUp(t)
-	in1 := []int{1, 9, 10, 3, 2, 3, 11, 0, 99, 30, 40, 50}
-	out1 := []int{3500, 9, 10, 70, 2, 3, 11, 0, 99, 30, 40, 50}
-	icc.ReadSlice(in1)
-	t.Logf("InputCod: %+v", icc.GetRegs())
-	icc.Execute()
-	t.Logf("ExecdRes: %+v", icc.GetRegs())
-	t.Logf("ValidRes: %+v", out1)
-	assert.Equal(t, out1, icc.GetRegs())
+	for _, pair := range testPairs {
+		SetUp(t)
+		icc.ReadSlice(pair.In)
+		icc.Execute(pair.In[1], pair.In[2])
+		assert.Equal(t, pair.Out, icc.GetRegs())
+	}
 }
