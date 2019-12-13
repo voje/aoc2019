@@ -1,5 +1,7 @@
 package vector
 
+import "math"
+
 // Vector represents a vector in 3D space.
 type Vector struct {
 	X float64
@@ -65,4 +67,9 @@ func Intersect(a, b, c, d Vector) (p *Vector) {
 		return &p
 	}
 	return nil
+}
+
+// Manhattan calculates the Manhattan destance between two pointes (represented by vectors).
+func Manhattan(a, b Vector) float64 {
+	return math.Abs(a.X-b.X) + math.Abs(a.Y-b.Y) + math.Abs(a.Z-b.Z)
 }
