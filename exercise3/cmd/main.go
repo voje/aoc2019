@@ -7,11 +7,13 @@ import (
 	"os"
 	"strconv"
 	"strings"
-
 	"github.com/voje/aoc2019/exercise3/vector"
+	"github.com/voje/aoc2019/exercise3/wire"
+	"sort"
 )
 
 func main() {
+	fmt.Println("First part: manhttan distance to first intersection:")
 	file, err := os.Open("../data.txt")
 	if err != nil {
 		fmt.Println(err)
@@ -47,7 +49,8 @@ func main() {
 		paths = append(paths, newPath)
 	}
 
-	fmt.Printf("paths:\n%+v\n", paths)
+	fmt.Printf("path1:\n%+v\n", paths[0])
+	// fmt.Printf("path2:\n%+v\n", paths[1])
 
 	// Find all intersections.
 	var intersections []vector.Vector
@@ -73,9 +76,73 @@ func main() {
 
 	fmt.Printf("Manhattan distances:\n%+v, Manhattan distance: %f\n", closest, vector.Manhattan(zero, closest))
 
+	fmt.Println("Second part: pathlength until the first intersection:")
 	// Part2: previous approach isn't very useful here.
 	// Let's try a more object-oriented approach.
 	// Each step (of the wire) stored in a hashed map (coordinates represent key).
 	// This way querying intersections is fast and we're not abstracting the problem too much.
 
+	// Read the data. 
+	file, err = os.Open("../data.txt")
+	if err != nil {
+		fmt.Printf("%v", err)
+	}
+
+	var wires []*wire.Wire
+	// Read two lines of file and fill the Wire objects.
+	scanner = bufio.NewScanner(file)
+	for scanner.Scan() {
+		newWire := wire.NewWire()
+		stepsTxt := strings.Split(scanner.Text(), ",")
+		for _, stepTxt := range stepsTxt {
+			// i should point to the last-added coordinate in the list.
+			prevStep := newWire.Steps[len(newWire.Steps) - 1]
+			val, err := strconv.ParseFloat(stepTxt[1:], 64)
+			if err != nil {
+				fmt.Println(err)
+			}
+			switch stepTxt[0] {
+			case 'U':
+				newWire.AddStep(prevStep.X, prevStep.Y + val)
+			case 'D':
+				newWire.AddStep(prevStep.X, prevStep.Y - val)
+			case 'L':
+				newWire.AddStep(prevStep.X - val, prevStep.Y)
+			case 'R':
+				newWire.AddStep(prevStep.X + val, prevStep.Y)
+			}
+		}
+		wires = append(wires, newWire)
+	}
+
+	// Debugging
+	for _, w := range wires {
+
+		/*
+		for _, step := range w.Steps {
+			fmt.Printf("%+v | ", step)
+		}
+		fmt.Println()
+		*/
+
+		keys := []string{}
+		for k, _ := range w.StepLookup {
+			keys = append(keys, k)
+		}
+		sort.Strings(keys)
+		for _, kk := range keys {
+			fmt.Println(kk)
+		}
+		fmt.Println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+	}
+
+	var wireIntersections []wire.Intersection
+	for _, step := range wires[0].Steps {
+		interStep, ok := wires[1].StepLookup[step.CoordString()]
+		if ok {
+			wireIntersections = append(wireIntersections, wire.Intersection{S1: step, S2: interStep})
+		}
+	}
+	
+	fmt.Printf("Intersections: \n%+v\n", wireIntersections)
 }
