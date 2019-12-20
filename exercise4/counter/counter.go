@@ -36,8 +36,8 @@ func (c *Counter) Tick() int {
 	return c.TickRec(len(c.digits) - 1)
 }
 
-// Recursively ticks counter at a certain position.  
-// Returns the number of decimal pairs created in the process.  
+// TickRec recursively ticks counter at a certain position.
+// Returns the number of decimal pairs created in the process.
 func (c *Counter) TickRec(pos int) (doubles int) {
 	// Add digit if needed.
 	if pos < 0 {
@@ -55,15 +55,16 @@ func (c *Counter) TickRec(pos int) (doubles int) {
 	if c.digits[pos] == 10 {
 		c.digits[pos] = 0
 		c.TickRec(pos - 1)
-		return
 	}
+	return
 }
 
+// HasDoubles will return true if the digits contain pairs.
 func (c *Counter) HasDoubles() bool {
-	for i := 0; i < len(c.digits) - 1; i++ {
-		if c.digits[i] == c.digits[i + 1] {
+	for i := 0; i < len(c.digits)-1; i++ {
+		if c.digits[i] == c.digits[i+1] {
 			return true
-		}	
+		}
 	}
 	return false
 }
