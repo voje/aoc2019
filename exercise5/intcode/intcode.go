@@ -7,6 +7,8 @@ import (
 const (
 	ADD = 1
 	MUL = 2
+	INPUT = 3
+	OUTPUT = 4
 	HALT = 99
 )
 
@@ -38,6 +40,18 @@ type OpHalt struct {}
 
 func (op *OpHalt) Exec(c *Computer) {
 	c.halt = true
+}
+
+type OpInput struct {}
+
+func (op *OpInput) Exec(c *Computer) {
+	// Todo store input.
+}
+
+type OpOutput struct {}
+
+func (op *OpOutput) Exec(c *Computer) {
+	// Todo store output.
 }
 
 type Computer struct {
