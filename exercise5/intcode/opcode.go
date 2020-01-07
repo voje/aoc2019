@@ -123,14 +123,19 @@ func (op *OpHalt) Exec() {
 	op.c.Halt()
 }
 
-type OpInput struct{}
-
-func (op *OpInput) Exec(c *Computer) {
-	// Todo store input.
+type OpInput struct {
+	OpBase
 }
 
-type OpOutput struct{}
+func (op *OpInput) Exec() {
+	input := 42
+	op.c.mem[op.Reg[1]] = input
+}
 
-func (op *OpOutput) Exec(c *Computer) {
+type OpOutput struct {
+	OpBase
+}
+
+func (op *OpOutput) Exec() {
 	// Todo store output.
 }
