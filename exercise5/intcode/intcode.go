@@ -31,13 +31,21 @@ func (c *Computer) GetMem(i int) int {
 	return c.mem[i]
 }
 
+func (c *Computer) DumpMem() []int {
+	return c.mem
+}
+
 func (c *Computer) Run() error {
 	for !c.halt {
 		op, err := NewOpcode(c)
 		if err != nil {
 			return err
 		}
-		op.Exec(c)
+		op.Exec()
 	}
 	return nil
+}
+
+func (c *Computer) Halt() {
+	c.halt = true
 }

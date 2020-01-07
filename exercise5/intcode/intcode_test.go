@@ -1,9 +1,10 @@
 package intcode_test
 
 import (
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/voje/aoc2019/exercise5/intcode"
-	"testing"
 )
 
 func TestAdd(t *testing.T) {
@@ -12,7 +13,7 @@ func TestAdd(t *testing.T) {
 	t.Log(c.ToString())
 	op, _ := intcode.NewOpcode(c)
 	t.Log(op)
-	op.Exec(c)
+	op.Exec()
 	t.Log(c.ToString())
 	assert.Equal(t, 42, c.GetMem(0))
 }
@@ -23,35 +24,63 @@ func TestMul(t *testing.T) {
 	t.Log(c.ToString())
 	op, _ := intcode.NewOpcode(c)
 	t.Log(op)
-	op.Exec(c)
+	op.Exec()
 	t.Log(c.ToString())
 	assert.Equal(t, 15, c.GetMem(0))
 }
 
-func TestRun1(t *testing.T) {
-	c := intcode.NewComputer([]int{1, 0, 0, 0, 99})
-	c.Run()
-	t.Log(c.ToString())
-	assert.Equal(t, 2, c.GetMem(0))
+func TestOpcodeOperations(t *testing.T) {
+	type Tsts struct {
+		InMem  []int
+		OutMem []int
+	}
+	tsts := []Tsts{
+		{
+			InMem:  []int{1, 0, 0, 0, 99},
+			OutMem: []int{2, 0, 0, 0, 99},
+		},
+		{
+			InMem:  []int{2, 3, 0, 3, 99},
+			OutMem: []int{2, 3, 0, 6, 99},
+		},
+		{
+			InMem:  []int{2, 4, 4, 5, 99, 0},
+			OutMem: []int{2, 4, 4, 5, 99, 9801},
+		},
+	}
+	for _, tst := range tsts {
+		c := intcode.NewComputer(tst.InMem)
+		c.Run()
+		assert.Equal(t, tst.OutMem, c.DumpMem())
+	}
 }
 
-func TestRun2(t *testing.T) {
-	c := intcode.NewComputer([]int{2, 3, 0, 3, 99})
-	c.Run()
-	t.Log(c.ToString())
-	assert.Equal(t, 6, c.GetMem(3))
-}
-
-func TestRun3(t *testing.T) {
-	c := intcode.NewComputer([]int{2, 4, 4, 5, 99, 0})
-	c.Run()
-	t.Log(c.ToString())
-	assert.Equal(t, 9801, c.GetMem(5))
-}
-
-func TestRun4(t *testing.T) {
-	c := intcode.NewComputer([]int{1, 1, 1, 4, 99, 5, 6, 0, 99})
-	c.Run()
-	t.Log(c.ToString())
-	assert.Equal(t, 30, c.GetMem(0))
+func TestParseOpcodeID(t *testing.T) {
+	type TestData struct {
+		Opc    int
+		Id     int
+		Params []int
+	}
+	tests := []TestData{
+		{
+			Opc:    1002,
+			Id:     2,
+			Params: []int{0, 1},
+		},
+		{
+			Opc:    02,
+			Id:     2,
+			Params: []int{},
+		},
+		{
+			Opc:    2,
+			Id:     2,
+			Params: []int{},
+		},
+	}
+	for _, tst := range tests {
+		id, params := intcode.ParseOpCodeID(tst.Opc)
+		assert.Equal(t, tst.Id, id)
+		assert.Equal(t, tst.Params, params)
+	}
 }
