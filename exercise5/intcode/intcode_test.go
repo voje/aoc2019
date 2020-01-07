@@ -1,6 +1,7 @@
 package intcode_test
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -63,8 +64,8 @@ func TestOpcodeOperations(t *testing.T) {
 			OutMem: []int{1102, 7, 3, 5, 99, 21},
 		},
 		{
-			InMem:  []int{0102, 7, 3, 5, 99, 0},
-			OutMem: []int{0102, 7, 3, 5, 99, 35},
+			InMem:  []int{102, 7, 3, 5, 99, 0},
+			OutMem: []int{102, 7, 3, 5, 99, 35},
 		},
 	}
 	for _, tst := range tsts {
@@ -72,6 +73,14 @@ func TestOpcodeOperations(t *testing.T) {
 		c.Run()
 		assert.Equal(t, tst.OutMem, c.DumpMem())
 	}
+}
+
+func TestInput(t *testing.T) {
+	r := strings.NewReader("13")
+	c := intcode.NewComputer([]int{3, 0, 99})
+	c.Reader = r
+	c.Run()
+	t.Log(c.DumpMem())
 }
 
 func TestParseOpcodeID(t *testing.T) {

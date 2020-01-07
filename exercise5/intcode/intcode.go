@@ -2,12 +2,14 @@ package intcode
 
 import (
 	"fmt"
+	"io"
 )
 
 type Computer struct {
-	mem  []int
-	pc   int
-	halt bool
+	Reader io.Reader // Useful for simulating user input with io.Writer.
+	mem    []int
+	pc     int
+	halt   bool
 }
 
 func NewComputer(mem []int) *Computer {

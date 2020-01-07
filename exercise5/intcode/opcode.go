@@ -1,6 +1,7 @@
 package intcode
 
 import (
+	"bufio"
 	"errors"
 	"strconv"
 )
@@ -93,6 +94,16 @@ func NewOpcode(c *Computer) (o Opcode, err error) {
 		return &OpHalt{
 			OpBase: opb,
 		}, nil
+	case INPUT:
+		opb.Reg = append(opb.Reg, c.next())
+		return &OpInput{
+			OpBase: opb,
+		}, nil
+	case OUTPUT:
+		opb.Reg = append(opb.Reg, c.next())
+		return &OpOutput{
+			OpBase: opb,
+		}, nil
 	default:
 		return nil, errors.New("unknown Opcode")
 	}
@@ -128,8 +139,10 @@ type OpInput struct {
 }
 
 func (op *OpInput) Exec() {
-	input := 42
-	op.c.mem[op.Reg[1]] = input
+	br := bufio.NewReader(op.c.Reader)
+	input, _ := br.ReadString('\n')
+	intInput, _ := strconv.Atoi(input)
+	op.c.mem[op.Reg[0]] = intInput
 }
 
 type OpOutput struct {
