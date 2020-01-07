@@ -29,6 +29,17 @@ func TestMul(t *testing.T) {
 	assert.Equal(t, 15, c.GetMem(0))
 }
 
+func TestMul1(t *testing.T) {
+	// If you precede an int with 0, it will use the octal numeric system. Avoid leading zeros.
+	c := intcode.NewComputer([]int{102, 7, 3, 5, 99, 0})
+	t.Log(c.ToString())
+	op, _ := intcode.NewOpcode(c)
+	t.Log(op)
+	op.Exec()
+	t.Log(c.ToString())
+	assert.Equal(t, []int{102, 7, 3, 5, 99, 35}, c.DumpMem())
+}
+
 func TestOpcodeOperations(t *testing.T) {
 	type Tsts struct {
 		InMem  []int
@@ -46,6 +57,14 @@ func TestOpcodeOperations(t *testing.T) {
 		{
 			InMem:  []int{2, 4, 4, 5, 99, 0},
 			OutMem: []int{2, 4, 4, 5, 99, 9801},
+		},
+		{
+			InMem:  []int{1102, 7, 3, 5, 99, 0},
+			OutMem: []int{1102, 7, 3, 5, 99, 21},
+		},
+		{
+			InMem:  []int{0102, 7, 3, 5, 99, 0},
+			OutMem: []int{0102, 7, 3, 5, 99, 35},
 		},
 	}
 	for _, tst := range tsts {
