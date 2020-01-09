@@ -17,9 +17,8 @@ type Opcode interface {
 }
 
 type OpAdd struct {
-	R1 int
-	R2 int
-	R3 int
+	args [3]int
+	params [3]int
 }
 
 func (op *OpAdd) Exec(c *Computer) {
