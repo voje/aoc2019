@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"errors"
 	"strconv"
+	"fmt"
 )
 
 // Opcode IDs
@@ -150,5 +151,5 @@ type OpOutput struct {
 }
 
 func (op *OpOutput) Exec() {
-	// Todo store output.
+	fmt.Println(op.c.mem[op.Reg[0]])
 }

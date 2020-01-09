@@ -3,6 +3,9 @@ package intcode
 import (
 	"fmt"
 	"io"
+	"os"
+	"encoding/csv"
+	"strconv"
 )
 
 type Computer struct {
@@ -14,10 +17,31 @@ type Computer struct {
 
 func NewComputer(mem []int) *Computer {
 	return &Computer{
+		Reader: os.Stdin,
 		mem:  mem,
 		pc:   0,
 		halt: false,
 	}
+}
+
+func NewComputerFromReader(r io.Reader) (c *Computer, err error) {
+	var mem []int
+	reader := csv.NewReader(r)
+	for {
+		line, err := reader.Read()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+		for _ , strNum := range line {
+			intNum, _ := strconv.Atoi(strNum)
+			mem = append(mem, intNum)
+		}
+	}
+	c = NewComputer(mem)
+	return c, nil
 }
 
 func (c *Computer) ToString() string {

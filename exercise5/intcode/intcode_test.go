@@ -8,6 +8,12 @@ import (
 	"github.com/voje/aoc2019/exercise5/intcode"
 )
 
+func TestNewComputerFromReader(t *testing.T) {
+	input := "1,2,3,4,5,6,7"
+	c, _ := intcode.NewComputerFromReader(strings.NewReader(input))
+	assert.Equal(t, []int{1,2,3,4,5,6,7}, c.DumpMem())
+}
+
 func TestAdd(t *testing.T) {
 	// Should add up 2 and 3 and place result in [3] (last in array).
 	c := intcode.NewComputer([]int{1, 4, 5, 0, 19, 23})
