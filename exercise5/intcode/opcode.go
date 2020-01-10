@@ -3,8 +3,8 @@ package intcode
 import (
 	"bufio"
 	"errors"
-	"strconv"
 	"fmt"
+	"strconv"
 )
 
 // Opcode IDs
@@ -151,5 +151,5 @@ type OpOutput struct {
 }
 
 func (op *OpOutput) Exec() {
-	fmt.Println(op.c.mem[op.Reg[0]])
+	fmt.Fprintln(op.c.Writer, op.c.mem[op.Reg[0]])
 }

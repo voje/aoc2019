@@ -1,9 +1,9 @@
 package intcode_test
 
 import (
+	"bytes"
 	"strings"
 	"testing"
-	"bytes"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/voje/aoc2019/exercise5/intcode"
@@ -12,7 +12,7 @@ import (
 func TestNewComputerFromReader(t *testing.T) {
 	input := "1,2,3,4,5,6,7"
 	c, _ := intcode.NewComputerFromReader(strings.NewReader(input))
-	assert.Equal(t, []int{1,2,3,4,5,6,7}, c.DumpMem())
+	assert.Equal(t, []int{1, 2, 3, 4, 5, 6, 7}, c.DumpMem())
 }
 
 func TestAdd(t *testing.T) {
@@ -91,12 +91,12 @@ func TestInput(t *testing.T) {
 }
 
 func TestOutput(t *testing.T) {
-	c := intcode.NewComputer([]int{4, 42, 99})
-	var b bytes.Buffer
-	c.Writer = b
+	c := intcode.NewComputer([]int{4, 3, 99, 42})
+	var wr bytes.Buffer
+	c.Writer = &wr
 	c.Run()
-	assert.Equal(t, 13, c.GetMem(0))
-	t.Log(b.ToString())
+	t.Log(wr.String())
+	assert.Equal(t, "42\n", wr.String())
 }
 
 func TestParseOpcodeID(t *testing.T) {
