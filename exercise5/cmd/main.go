@@ -12,6 +12,6 @@ func main() {
 		panic(err)
 	}
 	c, _ := intcode.NewComputerFromReader(f)
-	// fmt.Println(c.DumpMem())
+
 	c.Run()
 }

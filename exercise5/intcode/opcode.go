@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
+	"strings"
 )
 
 // Opcode IDs
@@ -140,9 +141,13 @@ type OpInput struct {
 }
 
 func (op *OpInput) Exec() {
-	br := bufio.NewReader(op.c.Reader)
-	input, _ := br.ReadString('\n')
-	intInput, _ := strconv.Atoi(input)
+	reader := bufio.NewReader(op.c.Reader)
+	strInput, _ := reader.ReadString('\n')
+	strInput = strings.Trim(strInput, "\n")
+	intInput, err := strconv.Atoi(strInput)
+	if err != nil {
+		panic(err)
+	}
 	op.c.mem[op.Reg[0]] = intInput
 }
 

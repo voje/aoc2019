@@ -87,6 +87,7 @@ func TestInput(t *testing.T) {
 	c := intcode.NewComputer([]int{3, 0, 99})
 	c.Reader = r
 	c.Run()
+	t.Log(c.DumpMem())
 	assert.Equal(t, 13, c.GetMem(0))
 }
 
