@@ -10,6 +10,7 @@ import (
 
 type Computer struct {
 	Reader io.Reader // Useful for simulating user input with io.Writer.
+	Writer io.Writer
 	mem    []int
 	pc     int
 	halt   bool
@@ -18,6 +19,7 @@ type Computer struct {
 func NewComputer(mem []int) *Computer {
 	return &Computer{
 		Reader: os.Stdin,
+		Writer: os.Stdout,
 		mem:  mem,
 		pc:   0,
 		halt: false,
