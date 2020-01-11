@@ -13,6 +13,10 @@ const (
 	MUL    = 2
 	INPUT  = 3
 	OUTPUT = 4
+	JUMPIFTRUE = 5
+	JUMPIFFALSE = 6
+	LT = 7
+	EQ = 8
 	HALT   = 99
 )
 
@@ -78,16 +82,12 @@ func NewOpcode(c *Computer) (o Opcode, err error) {
 	// Store parameters.
 	switch opID {
 	case ADD:
-		for i := 0; i < 3; i++ {
-			opb.Reg = append(opb.Reg, c.next())
-		}
+		opb.Reg = append(opb.Reg, c.next(), c.next(), c.next())
 		return &OpAdd{
 			OpBase: opb,
 		}, nil
 	case MUL:
-		for i := 0; i < 3; i++ {
-			opb.Reg = append(opb.Reg, c.next())
-		}
+		opb.Reg = append(opb.Reg, c.next(), c.next(), c.next())
 		return &OpMul{
 			OpBase: opb,
 		}, nil
@@ -103,6 +103,26 @@ func NewOpcode(c *Computer) (o Opcode, err error) {
 	case OUTPUT:
 		opb.Reg = append(opb.Reg, c.next())
 		return &OpOutput{
+			OpBase: opb,
+		}, nil
+	case JUMPIFTRUE:
+		opb.Reg = append(opb.Reg, c.next(), c.next())
+		return &OpJumpIfTrue{
+			OpBase: opb,
+		}, nil
+	case JUMPIFFALSE:
+		opb.Reg = append(opb.Reg, c.next(), c.next())
+		return &OpJumpIfFalse{
+			OpBase: opb,
+		}, nil
+	case LT:
+		opb.Reg = append(opb.Reg, c.next(), c.next(), c.next())
+		return &OpLessThan{
+			OpBase: opb,
+		}, nil
+	case EQ:
+		opb.Reg = append(opb.Reg, c.next(), c.next(), c.next())
+		return &OpEquals{
 			OpBase: opb,
 		}, nil
 	default:
@@ -152,4 +172,40 @@ type OpOutput struct {
 
 func (op *OpOutput) Exec() {
 	fmt.Println(op.c.mem[op.Reg[0]])
+}
+
+type OpJumpIfTrue struct {
+	OpBase
+}
+
+func (op *OpJumpIfTrue) Exec() {
+	if op.Reg[0] != 0 {
+		op.c.pc = op.Reg[1]
+	}
+}
+
+type OpJumpIfFalse struct {
+	OpBase
+}
+
+func (op *OpJumpIfFalse) Exec() {
+	if op.Reg[0] == 0 {
+		op.c.pc = op.Reg[1]
+	}
+}
+
+type OpLessThan struct {
+	OpBase
+}
+
+func (op *OpLessThan) Exec() {
+	if op.Reg[0] < op.Reg[1]
+}
+
+type OpEquals struct {
+	OpBase
+}
+
+func (op *OpEquals) Exec() {
+	// TODO
 }
