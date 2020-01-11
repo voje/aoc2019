@@ -129,3 +129,27 @@ func TestParseOpcodeID(t *testing.T) {
 		assert.Equal(t, tst.Params, params)
 	}
 }
+
+func TestOpEquals(t *testing.T) {
+	// Compare indirect.  
+	c := intcode.NewComputer([]int{8,5,6,7,99,42,42,-1})
+	c.Run()
+	assert.Equal(t, 1, c.GetMem(7))
+
+	// Compare direct.  
+	c = intcode.NewComputer([]int{1108,42,42,7,99,-1,-1,-1})
+	c.Run()
+	assert.Equal(t, 1, c.GetMem(7))
+
+	// Compare mixed.  
+	c = intcode.NewComputer([]int{108,42,6,7,99,-1,42,-1})
+	c.Run()
+	assert.Equal(t, 1, c.GetMem(7))
+
+	// Negative test.   
+	c = intcode.NewComputer([]int{1108,42,43,7,99,-1,-1,-1})
+	c.Run()
+	assert.Equal(t, 0, c.GetMem(7))
+}
+
+// TODO: tests for jumpiftrue, jumpiffalse, lt

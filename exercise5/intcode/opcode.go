@@ -184,8 +184,8 @@ type OpJumpIfTrue struct {
 }
 
 func (op *OpJumpIfTrue) Exec() {
-	if op.Reg[0] != 0 {
-		op.c.pc = op.Reg[1]
+	if op.GetAt(0) != 0 {
+		op.c.pc = op.GetAt(1)
 	}
 }
 
@@ -194,8 +194,8 @@ type OpJumpIfFalse struct {
 }
 
 func (op *OpJumpIfFalse) Exec() {
-	if op.Reg[0] == 0 {
-		op.c.pc = op.Reg[1]
+	if op.GetAt(0) == 0 {
+		op.c.pc = op.GetAt(1)
 	}
 }
 
@@ -204,7 +204,11 @@ type OpLessThan struct {
 }
 
 func (op *OpLessThan) Exec() {
-	if op.Reg[0] < op.Reg[1]
+	lt := 0
+	if op.GetAt(0) < op.GetAt(1) {
+		lt = 1
+	}
+	op.c.mem[op.Reg[2]] = lt
 }
 
 type OpEquals struct {
@@ -212,5 +216,9 @@ type OpEquals struct {
 }
 
 func (op *OpEquals) Exec() {
-	// TODO
+	eq := 0
+	if op.GetAt(0) == op.GetAt(1) {
+		eq = 1
+	}
+	op.c.mem[op.Reg[2]] = eq
 }
