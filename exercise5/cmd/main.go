@@ -1,8 +1,8 @@
 package main
 
-import(
+import (
 	"os"
-	"fmt"
+
 	"github.com/voje/aoc2019/exercise5/intcode"
 )
 
@@ -12,6 +12,6 @@ func main() {
 		panic(err)
 	}
 	c, _ := intcode.NewComputerFromReader(f)
-	fmt.Println(c.DumpMem())
+
 	c.Run()
 }
