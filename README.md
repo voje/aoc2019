@@ -1,2 +1,4 @@
 # aoc2019
-Advent of Code 2019. Going in Go.
+5 exercises finished in Go.
+
+Starting anew in Rust.
