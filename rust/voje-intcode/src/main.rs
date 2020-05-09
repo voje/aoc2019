@@ -1,22 +1,39 @@
-use num_derive::FromPrimitive;
-use num_traits::FromPrimitive;
 use std::fs;
 use std::fmt;
+use std::ops::{Index, IndexMut};
 
-#[derive(FromPrimitive)]
-enum Opcode {
-    Add = 1,
-    Mul = 2,
-    Halt = 3,
+
+mod instructions;
+
+struct Computer {
+    mem: Memory,
+    instr: Vec<Box<dyn Execute>>,
 }
 
-trait Executable {
-    fn execute(&self, mem: &mut Vec<i32>) -> Result<bool, &str>;
+impl Computer {
+    fn load_mem(&mut self, mem: String) {
+        self.mem = Memory::new(&mem[..]);
+        self.parse_mem();
+    }
+
+    // Reads memory and generates vector of instructions.   
+    fn parse_mem(&mut self) -> Result<(), &str> {
+        self.instr = Vec::new();
+        let mut ptr: usize = 0;
+        while ptr < self.mem.len() {
+            ptr = self.parse_executable(ptr)?;
+        }
+        Ok(())
+    }
+
+    // Adds instruction to self.instructions, returns pointer to next 
+    // instruction address.
+    fn parse_executable(&self, ptr: usize) -> Result<usize, &str> {
+        let instr: Execue
+        Ok(42)
+    }
 }
 
-struct Instruction {
-    opcode: Opcode,
-}
 
 struct Memory {
     fields: Vec<i32>
@@ -36,6 +53,19 @@ impl fmt::Display for Memory {
     }
 }
 
+impl Index<usize> for Memory {
+    type Output = i32;
+    fn index(&self, i: usize) -> &Self::Output {
+        &self.fields[i]
+    }
+}
+
+impl IndexMut<usize> for Memory {
+    fn index_mut(&mut self, i: usize) -> &mut Self::Output {
+        &mut self.fields[i]
+    }
+}
+
 impl Memory {
     fn new(input: &str) -> Memory {
         let mut fields: Vec<i32> = Vec::new();
@@ -52,6 +82,10 @@ impl Memory {
         Memory {
             fields: fields,
         }
+    }
+
+    fn len(&self) -> usize {
+        self.fields.len()        
     }
 }
 
