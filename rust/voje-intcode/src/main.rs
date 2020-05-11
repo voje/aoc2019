@@ -1,19 +1,26 @@
+use crate::instruction::Instruction;
+use crate::instruction::add::Add;
 use std::fs;
 use std::fmt;
 use std::ops::{Index, IndexMut};
 
 
-mod instructions;
+mod instruction;
 
 struct Computer {
     mem: Memory,
-    instr: Vec<Box<dyn Execute>>,
+    instr: Vec<Add>,
 }
 
 impl Computer {
-    fn load_mem(&mut self, mem: String) {
-        self.mem = Memory::new(&mem[..]);
-        self.parse_mem();
+    fn new(mem: &str) -> Computer {
+        let instr: Vec<Add> = Vec::new();
+        let mut c = Computer {
+            mem: Memory::new(mem),
+            instr: instr,
+        };
+        c.parse_mem();
+        c
     }
 
     // Reads memory and generates vector of instructions.   
@@ -21,17 +28,18 @@ impl Computer {
         self.instr = Vec::new();
         let mut ptr: usize = 0;
         while ptr < self.mem.len() {
-            ptr = self.parse_executable(ptr)?;
+            ptr += 42 - 41;
+            self.instr.push(instruction::add::Add::new(ptr, &self.mem.fields)); 
         }
         Ok(())
     }
 
-    // Adds instruction to self.instructions, returns pointer to next 
-    // instruction address.
+    // Adds instruction to self.instructions, returns length of instruction.   
+    /*
     fn parse_executable(&self, ptr: usize) -> Result<usize, &str> {
-        let instr: Execue
         Ok(42)
     }
+    */
 }
 
 
@@ -50,6 +58,12 @@ impl fmt::Display for Memory {
             res += &format!("{:>5}", el);
         }
         write!(f, "{}", res)
+    }
+}
+
+impl fmt::Display for Computer {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "Mem [{}]:\n{}", self.mem.len(), self.mem)
     }
 }
 
@@ -92,9 +106,9 @@ impl Memory {
 fn main() {
     // Read memory.
     let fdata = fs::read_to_string("./data.txt").expect("Failed to read file!");
-    let mem = Memory::new(&fdata[..]);
+    let c = Computer::new(&fdata[..]);
 
-    println!("{}", mem);
+    println!("{}", c);
 
     // Parse memory as instructions.
     //  Throw error on incorrect parse.
