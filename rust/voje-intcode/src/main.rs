@@ -1,5 +1,4 @@
 use crate::instruction::Instruction;
-use crate::instruction::add::Add;
 use std::fs;
 use std::fmt;
 use std::ops::{Index, IndexMut};
@@ -9,17 +8,20 @@ mod instruction;
 
 struct Computer {
     mem: Memory,
-    instr: Vec<Add>,
+    instr: Vec<Box<dyn Instruction>>,
 }
 
 impl Computer {
     fn new(mem: &str) -> Computer {
-        let instr: Vec<Add> = Vec::new();
+        let instr: Vec<Box<dyn Instruction>> = Vec::new();
         let mut c = Computer {
             mem: Memory::new(mem),
             instr: instr,
         };
-        c.parse_mem();
+        match c.parse_mem() {
+            Ok(_) => {},
+            Err(e) => println!("Failed parsing memory: {}", e),
+        }
         c
     }
 
@@ -28,8 +30,12 @@ impl Computer {
         self.instr = Vec::new();
         let mut ptr: usize = 0;
         while ptr < self.mem.len() {
-            ptr += 42 - 41;
-            self.instr.push(instruction::add::Add::new(ptr, &self.mem.fields)); 
+            let binstr: Box<dyn Instruction> = match self.mem[ptr] {
+                1 => Box::new(instruction::add::Add::new(ptr, &self.mem.fields)),
+                _ => panic!("Unknown insruction opcode."),
+            };
+            ptr += (*binstr).len();
+            self.instr.push(binstr); 
         }
         Ok(())
     }
