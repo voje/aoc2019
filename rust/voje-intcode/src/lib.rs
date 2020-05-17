@@ -1,10 +1,12 @@
-mod computer;
 use std::fs;
+
+mod computer;
+use computer::Computer;
 
 fn main() {
     // Read memory.
     let fdata = fs::read_to_string("./data.txt").expect("Failed to read file!");
-    let c = computer::Computer::new(&fdata[..]);
+    let c = Computer::new(&fdata[..]);
 
     println!("{}", c);
 

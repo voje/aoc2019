@@ -1,4 +1,5 @@
-use crate::instruction::Instruction;
+use crate::computer::Computer;
+use crate::computer::instr::instruction::Instruction;
 
 pub struct Add {
 	arg1: usize,
@@ -8,8 +9,8 @@ pub struct Add {
 }
 
 impl Instruction for Add {
-    fn execute(&self, mem: &mut Vec<i32>) -> Result<usize, &str> {
-    	mem[self.res] = mem[self.arg1] + mem[self.arg2];
+    fn execute(&self, mut c: Computer) -> Result<usize, &str> {
+    	c.mem[self.res] = c.mem[self.arg1] + c.mem[self.arg2];
     	Ok(self.len())
     }
 
