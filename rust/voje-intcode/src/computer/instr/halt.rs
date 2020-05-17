@@ -1,12 +1,13 @@
 use crate::computer::Computer;
 use crate::computer::instr::instruction::Instruction;
 
+#[derive(Debug)]
 pub struct Halt {
 	len: usize,
 }
 
 impl Instruction for Halt{
-    fn execute(&self, mut c: Computer) -> Result<usize, &str> {
+    fn execute(&self, c: &mut Computer) -> Result<usize, &str> {
     	c.halt = true;
     	Ok(self.len())
     }

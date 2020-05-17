@@ -1,18 +1,18 @@
 use crate::computer::instr::instruction::Instruction;
 use std::fmt;
-
+use std::collections::HashMap;
 mod instr;
 
 pub struct Computer {
     halt: bool,
     pc: usize,
     mem: Vec<i32>,
-    instr: Vec<Box<dyn Instruction>>,
+    instr: HashMap<usize, Box<dyn Instruction>>,
 }
 
 impl Computer {
     pub fn new(mem: &str) -> Computer {
-        let instr: Vec<Box<dyn Instruction>> = Vec::new();
+        let instr: HashMap<usize, Box<dyn Instruction>> = HashMap::new();
         let mut c = Computer {
             halt: true,
             pc: 0,
@@ -22,6 +22,8 @@ impl Computer {
             },
             instr: instr,
         };
+
+        // Populates instr.
         match c.parse_mem() {
             Ok(_) => {},
             Err(e) => println!("Failed parsing memory: {}", e),
@@ -46,7 +48,7 @@ impl Computer {
 
     // Reads memory and generates vector of instructions.   
     fn parse_mem(&mut self) -> Result<(), &str> {
-        self.instr = Vec::new();
+        self.instr = HashMap::new();
         let mut ptr: usize = 0;
         while ptr < self.mem.len() {
             let binstr: Box<dyn Instruction> = match self.mem[ptr] {
@@ -55,18 +57,23 @@ impl Computer {
                 99 => Box::new(instr::halt::Halt::new()),
                 _ => panic!("Unknown insruction opcode."),
             };
-            ptr += (*binstr).len();
-            self.instr.push(binstr); 
+            let el = match self.instr.insert(ptr, binstr) {
+                None => &self.instr[&ptr],  // Return reference to inserted.
+                _ => panic!("memory address already holds instructions"),
+            };
+            ptr += (*el).len();
         }
         Ok(())
     }
 
-    // Adds instruction to self.instructions, returns length of instruction.   
-    /*
-    fn parse_executable(&self, ptr: usize) -> Result<usize, &str> {
-        Ok(42)
+    fn run(&mut self) -> Result<(), &str> {
+        self.pc = 0;
+        while !self.halt {
+            let binst = &self.instr[&self.pc];
+            (*binst).execute(self);
+        }
+        Ok(())
     }
-    */
 }
 
 impl fmt::Display for Computer {
@@ -78,6 +85,12 @@ impl fmt::Display for Computer {
                 res += "\n";
             }
             res += &format!("{:>5}", el);
+        }
+
+        res += "\n--------------\n";
+        res += "instructions:\n";
+        for ins in &self.instr {
+            res += &format!("{:?}\n", ins)
         }
         write!(f, "{}", res)
     }
